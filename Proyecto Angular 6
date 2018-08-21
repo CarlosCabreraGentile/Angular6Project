@@ -1,0 +1,85 @@
+Crear proyecto:
+ng new NOMBREPROYECTO
+
+Instalar Bootstrap:
+npm install --save bootstrap (instala la ultima version)
+en angular.json -> "styles":[] agregar adentro: node_modules/bootstrap/dist/css/bootstrap.min.css
+
+Crear componente:
+ng g c NOMBRECOMPONENTE
+
+//Si el componente va adentro de una carpeta
+ng g c CARPETA/NOMBRECOMPONENTE
+
+//AUGURY ES UNA EXTENSION QUE SIRVE PARA DEBBUGUEAR ANGULAR
+
+//SECCION 6 CLASE 64
+Pasar data entre componentes:
+Crear un @input e importarlo desde el angular core. Con esto se expone la propiedad para que pueda ser accesible desde afuera. Cualquier componente padre puede ser esa propiedad. El input pasa informacion para abajo.
+
+@input('srvElement') element:{type: string, name: string}; //se puede usar un alias para llamarlo desde afuera con otro nombre.
+
+//Así se usa en el html
+*ngFor="let serverElement of serverElements"
+[srvElement]="serverElement" 
+
+Crear un @output e importarlo desde el angular core junto con el EventEmitter. Con esto se expone la propiedad para que pueda ser accesible desde afuera. Cualquier componente padre puede ser esa propiedad. El output pasa informacion para arriba, emite la información una vez clickeado un boton.
+
+@output() serverCreated = new EventEmitter<{serverName: string, serverContent: string}>();/se puede usar un alias para llamarlo desde afuera con otro nombre tambien.
+
+onAddServer(){
+    this.serverCreated.emit(){( serverName: this.newServerName, serverContent: this.newServerContent)};
+}
+
+Local Reference:
+//HTML
+<input type="text" class="form-control" #serverNameInput>
+//EN EL BUTTON DEL HTML CAPTURO LO PUESTO EN EL INPUT
+<button class="btn btn-primary" (click)="onAddServer(serverNameInput)">Add Server</button>
+
+--------------------------------------------------------------------------------------------------------
+
+DIRECTIVA DE ATRIBUTO: son directivas que cambian por ejemplo el estilo de un parrafo
+DIRECTIVA ESTRUCTURAL: son como las de atributo pero a su vez tambien cambian el DOM (por ejemplo *ngIf)
+ng g d NOMBREDIRECTIVA
+
+ARCHIVO TS
+import { Directive, OnInit, ElementRef, Renderer2 } from '@angular/core';
+
+@Directive ({
+selector: '[appBetterHighLight]'
+})
+
+export class BetterHighLightDirective implements OnInit {
+    constructor (private elRef: ElementRef, private renderer: Renderer2){
+    }
+
+    ngOnInit() {
+        this.renderer.setStyle(this.elRef.native.element, 'background-color', 'blue'); // pone en verde donde la directiva encontro el selector
+    }
+}
+
+AGREGARLA EN APP.MODULE.TS en declarations 
+
+ARCHIVO HTML
+
+<p appBetterHighLight>PARRAFO CREADO CON INFORMACION</p>
+
+--------------------------------------------------------------------------------------------------------
+
+HOSTLISTENER: Escuchan un evento que se arma y se reacciona segun se requiera
+HOSTBINDING: Se bindea a una accion dinamicamente
+
+import { Directive, HostListener } from '@angular/core';
+
+@Directive({
+  selector: '[appDropdown]'
+})
+export class DropdownDirective {
+@HostBinding('class.open') isOpen = false;
+
+    @HostListener('click') toggleOpen(){
+      this.isOpen = !this.isOpen;
+    }
+}
+
